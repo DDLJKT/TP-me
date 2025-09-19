@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>To Rukaiya ❤️</title>
+
+		<!-- GSAP + ScrollTrigger -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+		<style>
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+
+			body,
+			html {
+				height: 100%;
+				width: 100%;
+				font-family: "Arial", sans-serif;
+				overflow: hidden; /* Prevent scrolling between main pages */
+			}
+
+			/* Page containers */
+			.main-page {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				opacity: 1;
+				visibility: visible;
+				transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+			}
+
+			.main-page.hidden {
+				opacity: 0;
+				visibility: hidden;
+				pointer-events: none;
+			}
+
+			/* Page 1 Styles */
+			#page1 {
+				overflow-y: auto; /* Allow scrolling only within page 1 for the video effect */
+			}
+
+			#video-scroll-container {
+				position: relative;
+				height: 300vh;
+				background: #000000;
+			}
+
+			video.video-background {
+				position: sticky;
+				top: 0;
+				width: 100%;
+				height: 100vh;
+				object-fit: contain;
+				z-index: 0;
+				pointer-events: none;
+				display: block;
+			}
+
+			#video-overlay {
+				position: absolute; /* Changed to absolute */
+				top: 0; /* Positioned at the top of the scroll container */
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				padding-top: 5vh;
+				text-align: center;
+				z-index: 10; /* Ensure it's above the video */
+				pointer-events: none;
+				font-size: 2rem;
+				color: #fff;
+				opacity: 1;
+				transition: opacity 0.5s ease;
+			}
+
+			#video-overlay .arrow {
+				font-size: 3rem;
+				margin-top: 1rem;
+				animation: bounce 1.5s infinite;
+			}
+
+			@keyframes bounce {
+				0%,
+				100% {
+					transform: translateY(0);
+				}
+				50% {
+					transform: translateY(10px);
+				}
+			}
+
+			#transition-button {
+				position: fixed;
+				bottom: 50px;
+				left: 50%;
+				transform: translateX(-50%);
+				padding: 15px 30px;
+				background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+				color: white;
+				border: none;
+				border-radius: 50px;
+				font-size: 18px;
+				cursor: pointer;
+				opacity: 0;
+				transition: opacity 1s ease, transform 0.3s ease;
+				z-index: 20;
+				box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
+				pointer-events: none;
+			}
+
+			#transition-button:hover {
+				transform: translateX(-50%) scale(1.05);
+				box-shadow: 0 8px 30px rgba(255, 107, 107, 0.6);
+			}
+
+			/* Page 2 and 3 General Styles */
+			.page-container {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				position: relative;
+				background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+				height: 100%;
+				overflow-y: auto; /* Allow scrolling if content overflows */
+				padding-top: 40px; /* Add space at the top */
+				padding-bottom: 40px; /* Add space at the bottom */
+			}
+
+			.doctor-icons {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				pointer-events: none;
+				opacity: 0.1;
+				z-index: 1;
+			}
+
+			.icon {
+				position: absolute;
+				font-size: 40px;
+				color: #ff6b6b;
+			}
+
+			.icon-1 {
+				top: 10%;
+				left: 10%;
+			}
+			.icon-2 {
+				top: 20%;
+				right: 15%;
+			}
+			.icon-3 {
+				bottom: 30%;
+				left: 20%;
+			}
+			.icon-4 {
+				bottom: 20%;
+				right: 10%;
+			}
+
+			.falling-hearts {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				pointer-events: none;
+				z-index: 2;
+			}
+
+			.falling-heart {
+				position: absolute;
+				color: #ff6b6b;
+				font-size: 20px;
+				animation: fall linear infinite;
+				opacity: 0.6;
+			}
+
+			@keyframes fall {
+				to {
+					transform: translateY(100vh) rotate(360deg);
+				}
+			}
+
+			.tribute-content {
+				max-width: 800px;
+				width: 90%;
+				margin: 0 auto;
+				padding: 20px;
+				text-align: center;
+				position: relative;
+				z-index: 3;
+			}
+
+			h1 {
+				font-size: 3em;
+				color: #d63031;
+				margin-bottom: 30px;
+				animation: fadeInUp 1s ease;
+			}
+
+			.message {
+				background: white;
+				padding: 40px;
+				border-radius: 20px;
+				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+				margin-bottom: 30px;
+				animation: fadeInUp 1s ease 0.3s both;
+				position: relative;
+			}
+
+			.message p {
+				font-size: 1.2em;
+				line-height: 1.8;
+				color: #2d3436;
+				margin-bottom: 20px;
+			}
+
+			.heart-pulse {
+				font-size: 50px;
+				color: #ff6b6b;
+				animation: heartPulse 1s ease-in-out infinite;
+				margin: 20px 0;
+			}
+
+			.signature {
+				font-size: 1.3em;
+				color: #d63031;
+				font-weight: bold;
+				margin-top: 30px;
+			}
+
+			.ecg-container {
+				width: 100%;
+				height: 200px;
+				margin: 40px 0;
+				position: relative;
+				overflow: hidden;
+				background: white;
+				border-radius: 10px;
+				box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+			}
+
+			.ecg-line {
+				position: absolute;
+				top: 50%;
+				left: -100%;
+				width: 200%;
+				height: 2px;
+				transform: translateY(-50%);
+				animation: ecgMove 3s linear infinite;
+			}
+
+			.next-page-button,
+			.replay-button {
+				padding: 12px 25px;
+				background: linear-gradient(45deg, #74b9ff, #0984e3);
+				color: white;
+				border: none;
+				border-radius: 25px;
+				font-size: 16px;
+				cursor: pointer;
+				transition: all 0.3s ease;
+				margin-top: 20px;
+			}
+
+			.next-page-button:hover,
+			.replay-button:hover {
+				transform: scale(1.05);
+				box-shadow: 0 5px 20px rgba(116, 185, 255, 0.4);
+			}
+
+			@keyframes fadeInUp {
+				from {
+					opacity: 0;
+					transform: translateY(30px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+
+			@keyframes ecgMove {
+				0% {
+					left: -100%;
+				}
+				100% {
+					left: 0%;
+				}
+			}
+
+			@keyframes heartPulse {
+				0%,
+				100% {
+					transform: scale(1);
+				}
+				50% {
+					transform: scale(1.1);
+				}
+			}
+
+			/* Page 3 specific styles */
+			.fun-text {
+				font-size: 1.5em;
+				color: #d63031;
+				margin-bottom: 20px;
+			}
+
+			.question {
+				font-size: 1.4em;
+				color: #2d3436;
+				margin-bottom: 20px;
+			}
+
+			input[type="text"] {
+				padding: 10px;
+				font-size: 1em;
+				width: 80%;
+				max-width: 400px;
+				border: 2px solid #ff6b6b;
+				border-radius: 10px;
+				margin-bottom: 20px;
+			}
+
+			button.submit-button {
+				padding: 12px 25px;
+				background: linear-gradient(45deg, #74b9ff, #0984e3);
+				color: white;
+				border: none;
+				border-radius: 25px;
+				font-size: 16px;
+				cursor: pointer;
+				transition: all 0.3s ease;
+			}
+
+			button.submit-button:hover {
+				transform: scale(1.05);
+				box-shadow: 0 5px 20px rgba(116, 185, 255, 0.4);
+			}
+
+			#reveal-image {
+				display: none;
+				max-width: 100%;
+				margin-top: 30px;
+				border-radius: 20px;
+				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+			}
+
+			/* Modal styles */
+			.modal {
+				display: none;
+				position: fixed;
+				z-index: 1000;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.5);
+				align-items: center;
+				justify-content: center;
+			}
+
+			.modal-content {
+				background: white;
+				padding: 20px;
+				border-radius: 20px;
+				text-align: center;
+				max-width: 400px;
+				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+			}
+
+			.modal-content img {
+				max-width: 100%;
+				margin-bottom: 10px;
+			}
+
+			.close {
+				color: #aaa;
+				float: right;
+				font-size: 28px;
+				font-weight: bold;
+				cursor: pointer;
+			}
+
+			.close:hover {
+				color: black;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Page 1: Sticky scroll video section -->
+		<div id="page1" class="main-page">
+			<div id="video-scroll-container">
+				<div id="video-overlay">
+					<div>Scroll Down</div>
+					<div class="arrow">↓</div>
+				</div>
+				<video class="video-background" preload="auto" muted playsinline>
+					<source src="Final.mov" type="video/quicktime" />
+					Your browser does not support the video tag.
+				</video>
+			</div>
+			<button id="transition-button" onclick="goToPage('page2')">
+				Click for more 💌
+			</button>
+		</div>
+
+		<!-- Page 2: Tribute Content -->
+		<div id="page2" class="main-page hidden">
+			<div class="page-container">
+				<div class="doctor-icons">
+					<div class="icon icon-1">🩺</div>
+					<div class="icon icon-2">❤️</div>
+					<div class="icon icon-3">⚕️</div>
+					<div class="icon icon-4">💊</div>
+				</div>
+				<div class="falling-hearts" id="falling-hearts-2"></div>
+				<div class="tribute-content">
+					<h1>🩺 To My Favorite Doctor, Rukaiya</h1>
+
+					<div class="message">
+						<p>
+							I pray when I hold you or I'm held by you, placed in the crook of
+							your neck (like so), and my prayer is the empty space between our
+							hearts right before we match and also how creeks sound as they run
+							over rocks and how rocks sound when they are thrown into creeks or
+							even skipped and how i can imitate that and no one would ever know
+							what it was I was pretending to be, or maybe that I became.
+						</p>
+
+						<p>
+							Ill pray in the mornings as I look for my socks and as l slide
+							them onto my feet and look for a second at their different heights
+							and I pray in silences that go on too long and fill them with
+							energy and it hums and fills the void inside me
+						</p>
+
+						<div class="heart-pulse">❤️</div>
+
+						<p class="signature">
+							With all my love,<br />Your Adoring Partner ❤️
+						</p>
+					</div>
+
+					<!-- <div class="ecg-container">
+						<svg
+							class="ecg-line"
+							viewBox="0 0 800 200"
+							preserveAspectRatio="none"
+						>
+							<path
+								d="M0,100 L100,100 L120,60 L140,140 L160,20 L180,180 L200,100 L400,100 L420,60 L440,140 L460,20 L480,180 L500,100 L800,100"
+								stroke="#ff6b6b"
+								stroke-width="4"
+								fill="none"
+							/>
+						</svg>
+					</div> -->
+
+					<button class="next-page-button" onclick="goToPage('page3')">
+						Click for a question
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Page 3: Question Content -->
+		<div id="page3" class="main-page hidden">
+			<div class="page-container">
+				<div class="doctor-icons">
+					<div class="icon icon-1">🩺</div>
+					<div class="icon icon-2">❤️</div>
+					<div class="icon icon-3">⚕️</div>
+					<div class="icon icon-4">💊</div>
+				</div>
+				<div class="falling-hearts" id="falling-hearts-3"></div>
+				<div class="tribute-content">
+					<h1>🩺 A Little Puzzle for You</h1>
+
+					<div class="message">
+						<p class="fun-text">
+							Hey love, ready for a fun memory challenge? Let's see if you
+							remember this one! 😊
+						</p>
+
+						<p class="question">
+							Tell me the first thing u associated us with in regards to an
+							experience with Papa.
+						</p>
+
+						<input
+							type="text"
+							id="answer-input"
+							placeholder="Your answer here..."
+						/>
+
+						<button class="submit-button" onclick="checkAnswer()">
+							Submit
+						</button>
+
+						<div class="heart-pulse">❤️</div>
+
+						<img id="reveal-image" src="Ghibli.jpeg" alt="Revealed Image" />
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal for wrong answer -->
+		<div id="wrong-modal" class="modal">
+			<div class="modal-content">
+				<span class="close" onclick="closeModal()">&times;</span>
+				<img src="cat crying.jpeg" alt="Cat Crying" />
+				<p>My 52yr old auntie cant win here</p>
+			</div>
+		</div>
+
+		<script>
+			// Function to switch between pages
+			function goToPage(pageId) {
+				// Hide all main pages
+				document.querySelectorAll(".main-page").forEach((page) => {
+					page.classList.add("hidden");
+				});
+
+				// Show the target page
+				const targetPage = document.getElementById(pageId);
+				targetPage.classList.remove("hidden");
+			}
+
+			$(document).ready(function () {
+				const video = document.querySelector(".video-background");
+				let src = video.currentSrc || video.src;
+
+				function once(el, event, fn, opts) {
+					const onceFn = function (e) {
+						el.removeEventListener(event, onceFn);
+						fn.apply(this, arguments);
+					};
+					el.addEventListener(event, onceFn, opts);
+					return onceFn;
+				}
+
+				// iOS autoplay workaround
+				once(document.documentElement, "touchstart", function () {
+					video.play();
+					video.pause();
+				});
+
+				gsap.registerPlugin(ScrollTrigger);
+
+				let tl = gsap.timeline({
+					scrollTrigger: {
+						trigger: "#video-scroll-container",
+						scroller: "#page1", // Important: Set scroller to page1
+						start: "top top",
+						end: "bottom bottom",
+						scrub: true,
+					},
+				});
+
+				once(video, "loadedmetadata", () => {
+					tl.fromTo(
+						video,
+						{ currentTime: 0 },
+						{ currentTime: video.duration || 1 }
+					);
+
+					// Fade out overlay on scroll progress
+					gsap.to("#video-overlay", {
+						opacity: 0,
+						scrollTrigger: {
+							trigger: "#video-scroll-container",
+							scroller: "#page1",
+							start: "top top",
+							end: "20% top",
+							scrub: true,
+						},
+					});
+
+					// Show button when near end of scroll/video
+					ScrollTrigger.create({
+						trigger: "#video-scroll-container",
+						scroller: "#page1",
+						start: "bottom-=20% bottom",
+						onEnter: () =>
+							gsap.to("#transition-button", {
+								opacity: 1,
+								pointerEvents: "auto",
+							}),
+						onLeaveBack: () =>
+							gsap.to("#transition-button", {
+								opacity: 0,
+								pointerEvents: "none",
+							}),
+					});
+				});
+
+				// iOS reload workaround
+				setTimeout(() => {
+					if (window.fetch) {
+						fetch(src)
+							.then((response) => response.blob())
+							.then((blob) => {
+								const blobURL = URL.createObjectURL(blob);
+								const t = video.currentTime;
+								once(document.documentElement, "touchstart", () => {
+									video.play();
+									video.pause();
+								});
+								video.setAttribute("src", blobURL);
+								video.currentTime = t + 0.01;
+							});
+					}
+				}, 1000);
+			});
+
+			// Create falling hearts
+			function createHearts(containerId) {
+				const heartsContainer = document.getElementById(containerId);
+				if (!heartsContainer) return;
+				// Clear existing hearts before adding new ones
+				heartsContainer.innerHTML = "";
+				for (let i = 0; i < 20; i++) {
+					const heart = document.createElement("div");
+					heart.className = "falling-heart";
+					heart.innerHTML = "❤️";
+					heart.style.left = Math.random() * 100 + "%";
+					heart.style.animationDuration = Math.random() * 3 + 2 + "s";
+					heart.style.animationDelay = Math.random() * 2 + "s";
+					heartsContainer.appendChild(heart);
+				}
+			}
+			createHearts("falling-hearts-2");
+			createHearts("falling-hearts-3");
+
+			function checkAnswer() {
+				const answer = document
+					.getElementById("answer-input")
+					.value.trim()
+					.toLowerCase();
+
+				if (answer === "heels" || answer === "heel") {
+					document.getElementById("reveal-image").style.display = "block";
+				} else {
+					document.getElementById("wrong-modal").style.display = "flex";
+				}
+			}
+
+			function closeModal() {
+				document.getElementById("wrong-modal").style.display = "none";
+				document.getElementById("answer-input").value = ""; // Clear input for next try
+			}
+		</script>
+	</body>
+</html>
