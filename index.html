@@ -5,9 +5,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>To Rukaiya ❤️</title>
 
-		<!-- GSAP is not strictly needed for this version, but can be kept for other animations -->
+		<!-- GSAP and jQuery -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 		<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+		<!-- Confetti library -->
+		<script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
 
 		<style>
 			* {
@@ -62,11 +64,11 @@
 			video.video-background {
 				width: 100%;
 				height: 100%;
-				object-fit: contain; /* Ensures video covers the screen, maintaining aspect ratio */
+				object-fit: contain;
 			}
 
 			#transition-button {
-				position: absolute; /* Changed from fixed to absolute for positioning within the container */
+				position: absolute;
 				bottom: 50px;
 				left: 50%;
 				transform: translateX(-50%);
@@ -77,8 +79,8 @@
 				border-radius: 50px;
 				font-size: 18px;
 				cursor: pointer;
-				opacity: 0; /* Initially hidden */
-				pointer-events: none; /* Initially not clickable */
+				opacity: 0;
+				pointer-events: none;
 				transition: opacity 1s ease, transform 0.3s ease;
 				z-index: 20;
 				box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
@@ -97,9 +99,8 @@
 				position: relative;
 				background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
 				height: 100%;
-				overflow-y: auto; /* Allow scrolling if content overflows */
-				padding-top: 40px;
-				padding-bottom: 40px;
+				overflow-y: auto;
+				padding: 40px 20px;
 			}
 
 			.doctor-icons {
@@ -162,7 +163,7 @@
 
 			.tribute-content {
 				max-width: 800px;
-				width: 90%;
+				width: 100%;
 				margin: 0 auto;
 				padding: 20px;
 				text-align: center;
@@ -171,7 +172,7 @@
 			}
 
 			h1 {
-				font-size: 2.5em; /* Adjusted for mobile */
+				font-size: 2.5em;
 				color: #d63031;
 				margin-bottom: 30px;
 				animation: fadeInUp 1s ease;
@@ -179,7 +180,7 @@
 
 			.message {
 				background: white;
-				padding: 30px; /* Adjusted for mobile */
+				padding: 30px;
 				border-radius: 20px;
 				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 				margin-bottom: 30px;
@@ -188,28 +189,28 @@
 			}
 
 			.message p {
-				font-size: 1.1em; /* Adjusted for mobile */
+				font-size: 1.1em;
 				line-height: 1.7;
 				color: #2d3436;
 				margin-bottom: 20px;
 			}
 
 			.heart-pulse {
-				font-size: 40px; /* Adjusted for mobile */
+				font-size: 40px;
 				color: #ff6b6b;
 				animation: heartPulse 1s ease-in-out infinite;
 				margin: 20px 0;
 			}
 
 			.signature {
-				font-size: 1.2em; /* Adjusted for mobile */
+				font-size: 1.2em;
 				color: #d63031;
 				font-weight: bold;
 				margin-top: 30px;
 			}
 
 			.next-page-button,
-			.replay-button {
+			.submit-button {
 				padding: 12px 25px;
 				background: linear-gradient(45deg, #74b9ff, #0984e3);
 				color: white;
@@ -222,9 +223,16 @@
 			}
 
 			.next-page-button:hover,
-			.replay-button:hover {
+			.submit-button:hover {
 				transform: scale(1.05);
 				box-shadow: 0 5px 20px rgba(116, 185, 255, 0.4);
+			}
+
+			.submit-button:disabled {
+				background: #ccc;
+				cursor: not-allowed;
+				transform: none;
+				box-shadow: none;
 			}
 
 			@keyframes fadeInUp {
@@ -250,49 +258,76 @@
 
 			/* Page 3 specific styles */
 			.fun-text {
-				font-size: 1.3em; /* Adjusted for mobile */
+				font-size: 1.3em;
 				color: #d63031;
 				margin-bottom: 20px;
 			}
 
+			.question-container {
+				display: none;
+			}
+			.question-container.active {
+				display: block;
+			}
+
 			.question {
-				font-size: 1.2em; /* Adjusted for mobile */
+				font-size: 1.2em;
 				color: #2d3436;
 				margin-bottom: 20px;
+				min-height: 50px;
 			}
 
 			input[type="text"] {
 				padding: 10px;
 				font-size: 1em;
-				width: 100%; /* Full width on mobile */
+				width: 100%;
 				max-width: 400px;
 				border: 2px solid #ff6b6b;
 				border-radius: 10px;
 				margin-bottom: 20px;
 			}
 
-			button.submit-button {
-				padding: 12px 25px;
-				background: linear-gradient(45deg, #74b9ff, #0984e3);
-				color: white;
-				border: none;
-				border-radius: 25px;
-				font-size: 16px;
-				cursor: pointer;
-				transition: all 0.3s ease;
+			.fill-in-the-blank {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+				flex-wrap: wrap;
 			}
 
-			button.submit-button:hover {
-				transform: scale(1.05);
-				box-shadow: 0 5px 20px rgba(116, 185, 255, 0.4);
+			.fill-in-the-blank input {
+				width: 120px;
+				text-align: center;
+			}
+
+			#final-reveal {
+				display: none;
+				text-align: center;
+			}
+
+			#final-text {
+				font-size: 1.8em;
+				color: #d63031;
+				font-weight: bold;
+				margin-bottom: 30px;
+				animation: fadeInUp 1s ease;
+			}
+
+			#final-image-container {
+				display: none;
 			}
 
 			#reveal-image {
-				display: none;
 				max-width: 100%;
-				margin-top: 30px;
 				border-radius: 20px;
 				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+			}
+
+			#image-caption {
+				margin-top: 20px;
+				font-size: 1.2em;
+				color: #2d3436;
+				font-style: italic;
 			}
 
 			/* Modal styles */
@@ -317,11 +352,7 @@
 				width: 90%;
 				max-width: 400px;
 				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-			}
-
-			.modal-content img {
-				max-width: 100%;
-				margin-bottom: 10px;
+				animation: fadeInUp 0.5s;
 			}
 
 			.close {
@@ -369,7 +400,6 @@
 				<div class="falling-hearts" id="falling-hearts-2"></div>
 				<div class="tribute-content">
 					<h1>🩺 To My Favorite Doctor, Rukaiya</h1>
-
 					<div class="message">
 						<p>
 							I pray when I hold you or I'm held by you, placed in the crook of
@@ -379,19 +409,14 @@
 							even skipped and how i can imitate that and no one would ever know
 							what it was I was pretending to be, or maybe that I became.
 						</p>
-
 						<p>
 							Ill pray in the mornings as I look for my socks and as l slide
 							them onto my feet and look for a second at their different heights
 							and I pray in silences that go on too long and fill them with
 							energy and it hums and fills the void inside me
 						</p>
-
 						<div class="heart-pulse">❤️</div>
-
-						<p class="signature">
-							With all my love,<br />Your Adoring Partner ❤️
-						</p>
+						<p class="signature">With all my love,<br />Your Gay Musfa ❤️</p>
 					</div>
 					<button class="next-page-button" onclick="goToPage('page3')">
 						Click for a question
@@ -411,47 +436,235 @@
 				</div>
 				<div class="falling-hearts" id="falling-hearts-3"></div>
 				<div class="tribute-content">
-					<h1>🩺 A Little Puzzle for You</h1>
+					<div id="quiz-header">
+						<h1>🩺 A Little Puzzle for You</h1>
+					</div>
 
-					<div class="message">
+					<div id="questions-section" class="message">
 						<p class="fun-text">
-							Hey love, ready for a fun memory challenge? Let's see if you
-							remember this one! 😊
+							Hey love, ready for a fun memory challenge? Not a 52yr old
+							auntie's memory test, I promise! 😊
 						</p>
+						<!-- Questions will be dynamically inserted here -->
+					</div>
 
-						<p class="question">
-							Tell me the first thing u associated us with in regards to an
-							experience with Papa.
-						</p>
+					<div id="final-reveal" class="message">
+						<div id="wait-text-container">
+							<p id="final-text">Someone cant wait 😈</p>
+							<button class="submit-button" onclick="showImage()">
+								Click to Reveal
+							</button>
+						</div>
 
-						<input
-							type="text"
-							id="answer-input"
-							placeholder="Your answer here..."
-						/>
-
-						<button class="submit-button" onclick="checkAnswer()">
-							Submit
-						</button>
-
-						<div class="heart-pulse">❤️</div>
-
-						<img id="reveal-image" src="Ghibli.jpeg" alt="Revealed Image" />
+						<div id="final-image-container">
+							<img src="Ghibli.jpeg" alt="Revealed Image" id="reveal-image" />
+							<p id="image-caption">
+								The only person I'd gladly lose in loving and being super proud
+								of u.
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- Modal for wrong answer -->
-		<div id="wrong-modal" class="modal">
+		<div id="wrong-answer-modal" class="modal">
 			<div class="modal-content">
 				<span class="close" onclick="closeModal()">&times;</span>
-				<img src="cat crying.jpeg" alt="Cat Crying" />
-				<p>My 52yr old auntie cant win here</p>
+				<p>Oops! That's not quite right. Try again! ❤️</p>
 			</div>
 		</div>
 
 		<script>
+			const questions = [
+				{
+					question:
+						"Tell me the first thing u associated us with in regards to an experience with Papa.",
+					type: "text",
+					correctAnswer: ["heels", "heel"],
+				},
+				{
+					question: "How did ur mom first react when u first told her abt me?",
+					type: "text",
+				},
+				{
+					question: "The ___ to my ___",
+					type: "fill-in",
+					parts: ["The", "to my"],
+				},
+				{
+					question: "“May god give me the strength to…. “ When was this said?",
+					type: "text",
+				},
+				{
+					question:
+						"What was my fav nickname for u which was also my fav nashta too?",
+					type: "text",
+				},
+				{ question: "Where did we first see each other?", type: "text" },
+				{ question: "What did we have the last time we met?", type: "text" },
+				{ question: "What is ur favorite flower?", type: "text" },
+				{
+					question: "How long in days since we've been together?",
+					type: "text",
+				},
+				{
+					question:
+						"What was the one thing u said to me that changed my entire perception about our relationship?",
+					type: "text",
+				},
+				{ question: "Why does ur mom love me sm?", type: "text" },
+				{
+					question: "Who do i love more than you?",
+					type: "text",
+					correctAnswer: "amena ben",
+				},
+				{ question: "What was my first line to u?", type: "text" },
+				{
+					question: "What was the video i went bonkers for u on?",
+					type: "text",
+				},
+				{
+					question:
+						"What song did u put in the video that i watched 1000 times?",
+					type: "text",
+				},
+				{ question: "What was ur first prank to me?", type: "text" },
+				{ question: "What was our first disagreement about?", type: "text" },
+				{ question: "How amazing of a doctor are u gonna be?", type: "text" },
+				{ question: "How proud do u make us all?", type: "text" },
+			];
+
+			let currentQuestionIndex = 0;
+			const questionsSection = document.getElementById("questions-section");
+			const jsConfetti = new JSConfetti();
+
+			function displayQuestion(index) {
+				// Fade out the old question
+				gsap.to(questionsSection, {
+					opacity: 0,
+					duration: 0.3,
+					onComplete: () => {
+						const q = questions[index];
+						let inputHtml = "";
+
+						if (q.type === "text") {
+							inputHtml = `<input type="text" class="answer-input" placeholder="Your answer here..." oninput="checkInputs()">`;
+						} else if (q.type === "fill-in") {
+							inputHtml = `<div class="fill-in-the-blank">
+                        ${q.parts[0]}
+                        <input type="text" class="answer-input" oninput="checkInputs()">
+                        ${q.parts[1]}
+                        <input type="text" class="answer-input" oninput="checkInputs()">
+                    </div>`;
+						}
+
+						questionsSection.innerHTML = `
+                    <p class="fun-text" style="${
+											index > 0 ? "display: none;" : ""
+										}">
+                        Hey love, ready for a fun memory challenge? Not a 52yr old auntie's memory test, I promise! 😊
+                    </p>
+                    <div class="question-container active">
+                        <p class="question">${index + 1}. ${q.question}</p>
+                        ${inputHtml}
+                        <button class="submit-button" onclick="checkAnswer()" disabled>Submit</button>
+                    </div>
+                `;
+
+						// Fade in the new question
+						gsap.to(questionsSection, { opacity: 1, duration: 0.3 });
+					},
+				});
+			}
+
+			function checkInputs() {
+				const inputs = document.querySelectorAll(".answer-input");
+				const allFilled = Array.from(inputs).every(
+					(input) => input.value.trim() !== ""
+				);
+				document.querySelector(".submit-button").disabled = !allFilled;
+			}
+
+			function checkAnswer() {
+				const q = questions[currentQuestionIndex];
+				const inputs = document.querySelectorAll(".answer-input");
+				const userAnswer = Array.from(inputs)
+					.map((i) => i.value.trim().toLowerCase())
+					.join(" ");
+
+				if (q.correctAnswer) {
+					const isCorrect = Array.isArray(q.correctAnswer)
+						? q.correctAnswer.includes(userAnswer)
+						: userAnswer === q.correctAnswer;
+
+					if (!isCorrect) {
+						document.getElementById("wrong-answer-modal").style.display =
+							"flex";
+						return; // Stop if the answer is wrong
+					}
+				}
+
+				currentQuestionIndex++;
+				if (currentQuestionIndex < questions.length) {
+					displayQuestion(currentQuestionIndex);
+				} else {
+					showFinalReveal();
+				}
+			}
+
+			function showFinalReveal() {
+				gsap.to([questionsSection, "#quiz-header"], {
+					opacity: 0,
+					duration: 0.5,
+					onComplete: () => {
+						questionsSection.style.display = "none";
+						document.getElementById("quiz-header").style.display = "none";
+						const finalReveal = document.getElementById("final-reveal");
+						finalReveal.style.display = "block";
+						gsap.to(finalReveal, { opacity: 1, duration: 0.5 });
+						jsConfetti.addConfetti({
+							emojis: ["❤️", "🩺", "✨", "🎉"],
+							confettiNumber: 100,
+						});
+					},
+				});
+			}
+
+			function showImage() {
+				const waitContainer = document.getElementById("wait-text-container");
+				gsap.to(waitContainer, {
+					opacity: 0,
+					duration: 0.5,
+					onComplete: () => {
+						waitContainer.style.display = "none";
+						const finalImageContainer = document.getElementById(
+							"final-image-container"
+						);
+						finalImageContainer.style.display = "block";
+
+						// Pop effect for the image
+						gsap.from("#reveal-image", {
+							scale: 0.5,
+							opacity: 0,
+							duration: 0.8,
+							ease: "back.out(1.7)",
+						});
+						gsap.from("#image-caption", {
+							y: 20,
+							opacity: 0,
+							duration: 0.8,
+							delay: 0.5,
+						});
+					},
+				});
+			}
+
+			function closeModal() {
+				document.getElementById("wrong-answer-modal").style.display = "none";
+			}
+
 			// Function to switch between pages
 			function goToPage(pageId) {
 				document.querySelectorAll(".main-page").forEach((page) => {
@@ -459,28 +672,30 @@
 				});
 				const targetPage = document.getElementById(pageId);
 				targetPage.classList.remove("hidden");
+
+				if (pageId === "page3") {
+					displayQuestion(currentQuestionIndex);
+				}
 			}
 
 			$(document).ready(function () {
 				const video = document.querySelector(".video-background");
-
-				// When the video ends, show the button
 				video.onended = function () {
 					gsap.to("#transition-button", {
 						opacity: 1,
 						pointerEvents: "auto",
-						duration: 1, // Fade-in duration
+						duration: 1,
 					});
 				};
 
-				// Fallback for browsers that might not autoplay
 				video.play().catch((error) => {
 					console.log("Autoplay was prevented:", error);
-					// You could show a play button here if needed
 				});
+
+				createHearts("falling-hearts-2");
+				createHearts("falling-hearts-3");
 			});
 
-			// Create falling hearts
 			function createHearts(containerId) {
 				const heartsContainer = document.getElementById(containerId);
 				if (!heartsContainer) return;
@@ -494,26 +709,6 @@
 					heart.style.animationDelay = Math.random() * 2 + "s";
 					heartsContainer.appendChild(heart);
 				}
-			}
-			createHearts("falling-hearts-2");
-			createHearts("falling-hearts-3");
-
-			function checkAnswer() {
-				const answer = document
-					.getElementById("answer-input")
-					.value.trim()
-					.toLowerCase();
-
-				if (answer === "heels" || answer === "heel") {
-					document.getElementById("reveal-image").style.display = "block";
-				} else {
-					document.getElementById("wrong-modal").style.display = "flex";
-				}
-			}
-
-			function closeModal() {
-				document.getElementById("wrong-modal").style.display = "none";
-				document.getElementById("answer-input").value = "";
 			}
 		</script>
 	</body>
